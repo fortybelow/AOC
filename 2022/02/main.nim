@@ -1,8 +1,4 @@
-import os
 import strutils
-import sequtils
-import std/tables
-import std/algorithm
 
 # Enum of char
 type
@@ -55,30 +51,18 @@ iterator parse(file: string): tuple[opponent: Play, suggestion: Suggestion] =
     var suggestions = line.split(" ")
     yield (suggestions[0][0].toPlay(), suggestions[1][0].toSuggestion())
 
+proc move(opponent: Play, suggested: Suggestion): Play =
+  result = case suggested:
+    of Draw: opponent
+    of Lose: losing(opponent)
+    of Win: winning(opponent)
+
 proc evaluate(opponent: Play, suggested: Suggestion): int =
-  case opponent
-  of Rock:
-    case suggested
-    of Draw: score(Rock) + score(Draw)
-    of Lose: score(losing(Rock)) + score(Lose)
-    of Win: score(winning(Rock)) + score(Win)
-  of Paper:
-    case suggested
-    of Draw: score(Paper) + score(Draw)
-    of Lose: score(losing(Paper)) + score(Lose)
-    of Win: score(winning(Paper)) + score(Win)
-  of Scissors:
-    case suggested
-    of Draw: score(Scissors) + score(Draw)
-    of Lose: score(losing(Scissors)) + score(Lose)
-    of Win: score(winning(Scissors)) + score(Win)
+  score(move(opponent, suggested)) + score(suggested)
 
 var totalScore = 0
 for (opponent, suggested) in parse("input.txt"):
-  echo opponent, suggested
-
-  var score = evaluate(opponent, suggested)
-  totalScore += score
-  echo score, " ", totalScore
+  echo "Opponent '", opponent, "' suggestion '", suggested, "' -> Plays ", move(opponent, suggested), " -> Score ", evaluate(opponent, suggested)
+  totalScore += evaluate(opponent, suggested)
 
 echo "Strategy score: ", totalScore
