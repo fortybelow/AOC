@@ -1,2 +1,4 @@
 *.exe
 *.log
+rust/target
+rust/target/.*
