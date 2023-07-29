@@ -6,6 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# Depend on itertools
+itertools = "0.10.0"
+colorful = "0.2.2"
 
 
 [[bin]]
@@ -27,4 +30,30 @@ args = ["src/day3/day3.txt"]
 name = "day4"
 path = "src/day4/day4.rs"
 args = ["src/day4/day4.txt"]
+
+[[bin]]
+name = "day5"
+path = "src/day5/day5.rs"
+args = ["src/day5/day5.txt"]
+
+[[bin]]
+name = "day6"
+path = "src/day6/day6.rs"
+args = ["src/day6/day6.txt"]
+
+[[bin]]
+name = "day7"
+path = "src/day7/day7.rs"
+args = ["src/day7/day7.txt"]
+
+[[bin]]
+name = "day8"
+path = "src/day8/day8.rs"
+args = ["src/day8/day8.txt"]
+
+
+[[bin]]
+name = "day9"
+path = "src/day9/day9.rs"
+args = ["src/day9/day9.txt"]
 
