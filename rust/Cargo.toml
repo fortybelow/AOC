@@ -51,7 +51,6 @@ name = "day8"
 path = "src/day8/day8.rs"
 args = ["src/day8/day8.txt"]
 
-
 [[bin]]
 name = "day9"
 path = "src/day9/day9.rs"

@@ -16,7 +16,8 @@ args = ["src/day'''$day'''/day'''$day'''.txt"]
 '''
 
 options=$(getopt -o ad --long add,delete -- "$@")
-if [ $? != 0 ] ; then echo "missing options\n${options_descrption}" >&2 ; exit 1 ; fi
+if [ $? != 0 ] ; then echo "missing options${options_description}" >&2 ; exit 1 ; fi
+if [ $# -eq 0 ]; then echo "missing options${options_description}" >&2 ; exit 1 ; fi
 
 eval set -- "$options"
 while true; do
@@ -42,7 +43,8 @@ while true; do
             touch src/day$day/day$day.rs
             touch src/day$day/day$day.txt
 
-            shift;
+            shift
+            ;;
         -d | --delete )
             shift;
             day=$1;
@@ -58,6 +60,7 @@ while true; do
             sed -i "/name = \"day$day\"/,+1d" Cargo.toml
             rm -rf src/day$day
 
+            shift
             ;;
         -- ) shift; break ;;
         * ) break ;;
