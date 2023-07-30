@@ -8,21 +8,26 @@ Usage: $0 <day>
     -d, --delete    Delete a day
 '''
 
-new_day_description='''
+function day_description {
+day=$1
+echo "
 [[bin]]
-name = "day'''$day'''"
-path = "src/day'''$day'''/day'''$day'''.rs"
-args = ["src/day'''$day'''/day'''$day'''.txt"]
-'''
+name = \"day$day\"
+path = \"src/day$day/day$day.rs\"
+args = [\"src/day$day/day$day.txt\"]
+"
+}
 
-options=$(getopt -o ad --long add,delete -- "$@")
-if [ $? != 0 ] ; then echo "missing options${options_description}" >&2 ; exit 1 ; fi
-if [ $# -eq 0 ]; then echo "missing options${options_description}" >&2 ; exit 1 ; fi
+
+options=$(getopt -o a:d: --long add:,delete: -- "$@")
+if [[ $? != 0 ]] || [[ $# -eq 0 ]]; then echo "missing options${options_description}" >&2 ; exit 1 ; fi
 
 eval set -- "$options"
 while true; do
     case "$1" in
         -a | --add )
+            shift;
+            day=$1;
             day_already_exists=$(grep -c "day$day" $(dirname $(realpath $0))/Cargo.toml)
 
             if [ $day_already_exists -gt 0 ]; then
@@ -30,18 +35,21 @@ while true; do
                 exit 1
             fi
 
-            shift;
-            day=$1;
-
-            if [ -z "$day" ]; then
+            if [ -z "$day" ] || ! [[ "$day" =~ ^[0-9]+$ ]]; then
                 echo "Missing day number"
                 exit 1
             fi
 
-            echo "$new_day_description" >> Cargo.toml
+            previous_toml=$(cat Cargo.toml)
+            new_day_toml=$(day_description $day)
+            echo "$new_day_toml" >> Cargo.toml
             mkdir -p src/day$day
             touch src/day$day/day$day.rs
             touch src/day$day/day$day.txt
+
+            # Show diff of toml
+            echo "Diff of Cargo.toml"
+            diff <(echo "$previous_toml") Cargo.toml
 
             shift
             ;;
@@ -49,16 +57,34 @@ while true; do
             shift;
             day=$1;
 
-            if [ -z "$day" ]; then
+            if [ -z "$day" ] || ! [[ "$day" =~ ^[0-9]+$ ]]; then
                 echo "Missing day number"
                 exit 1
             fi
+            
+            TARGET="name = \"day$day\""
+            echo "Removing target $TARGET"
 
-            # remove day description from Cargo.toml
-            # Look for name = "day$day" and delete the next 3 lines and previous line.
-            sed -i "/name = \"day$day\"/,+3d" Cargo.toml
-            sed -i "/name = \"day$day\"/,+1d" Cargo.toml
-            rm -rf src/day$day
+            awk -v tgt="$TARGET" '
+                # Store the lines in an array
+                {a[NR]=$0}
+
+                # If the current line matches the target
+                $0 ~ tgt {del[NR-1]; del[NR]; del[NR+1]; del[NR+2]}
+
+                # At the end of processing
+                END {
+                    # Print the lines that have not been marked for deletion
+                    for(i=1; i<=NR; i++)
+                        if (!(i in del))
+                            print a[i]
+                }
+            ' Cargo.toml > Cargo.toml.tmp && mv Cargo.toml.tmp Cargo.toml
+
+            if [ -d src/day$day ]; then
+                echo "Removing src/day$day"
+                rm -rf src/day$day
+            fi
 
             shift
             ;;
