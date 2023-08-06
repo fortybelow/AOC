@@ -701,7 +701,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_run() {
+    fn golden() {
         let memory = Memory::new(vec![1,9,10,3,2,3,11,0,99,30,40,50]);
         let mut execution_context = Machine::new(memory, 0 as MachineId);
         let mut input = ConsoleSource::new(Color::Green);
