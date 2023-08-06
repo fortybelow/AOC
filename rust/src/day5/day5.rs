@@ -210,7 +210,7 @@ fn deserialize(memory: &mut Memory) -> Result<Vec<Instruction>, String>
         };
 
         memory.offset += increment;
-        let previous_offset = memory.offset.clone();
+        let _previous_offset = memory.offset.clone();
         
         // println!("Instruction: {:?}", instruction);
         instruction.execute(memory)?;

@@ -13,8 +13,6 @@ use itertools::Itertools;
 // console output coloring
 use colorful::Color;
 use colorful::Colorful;
-use colorful::RGB;
-use colorful::core::StrMarker;
 
 // allow use of io crate
 use std::io;
@@ -200,7 +198,7 @@ impl Memory {
         };
             
         match instruction {
-            Instruction::Trinary { code, lhs, rhs, dst } => {
+            Instruction::Trinary { code: _, lhs, rhs, dst } => {
                 configure_for_color(*lhs, false);
                 configure_for_color(*rhs, false);
                 configure_for_color(*dst, false);
@@ -217,7 +215,7 @@ impl Memory {
                     },
                 }
             },
-            Instruction::Unary { code, src } => {
+            Instruction::Unary { code: _, src } => {
                 configure_for_color(*src, false);
             },
             _ => { },
@@ -407,7 +405,7 @@ fn run(context: &mut Machine, input: &mut dyn Source, output: &mut dyn Sink)
         let instruction_info = format!("{}; Instr Pointer: {}",
                                        instruction.to_string_with_memory(&context.memory).color(Color::Green),
                                        format!("{}", instruction_pointer).color(Color::PaleGreen1a));
-        let result = instruction.execute(context, input, output);
+        let _result = instruction.execute(context, input, output);
 
         match context.state.clone() {
             MachineState::Running => {
@@ -609,7 +607,7 @@ fn main() {
                         let output = solution.read().unwrap();
                         max = std::cmp::max(max, output);
 
-                        for (i, bus) in buses.iter().enumerate() {
+                        for (_i, bus) in buses.iter().enumerate() {
                             println!("{} : MemoryBus {}:", format!("Permutation {}", permutation.iter().map(|v| format!("{}", v)).collect::<Vec<_>>().join(", ")).color(Color::PaleGreen1a), bus);
                         }
                     }
@@ -648,7 +646,7 @@ fn main() {
                                 println!("{}: Running. {}", machine.to_string(), buses[i]);
                                 if i + 1 == count_buses {
                                     let (left, right) = buses.split_at_mut(1);
-                                    let (left_offset, right_offset) = (left.len() + right.len() - 1, (left.len() + right.len()) % count_buses);
+                                    let (_left_offset, _right_offset) = (left.len() + right.len() - 1, (left.len() + right.len()) % count_buses);
 
                                     let input_bus_offset = right.len() - 1 + left.len();
                                     let output_bus = &mut left[0];
@@ -725,14 +723,12 @@ mod tests {
     #[test]
     fn test_run() {
         let memory = Memory::new(vec![1,9,10,3,2,3,11,0,99,30,40,50]);
-        let mut execution_context = ExecutionContext::new(memory);
+        let mut input = ConsoleSource::new(Color::Green);
+        let mut output = ConsoleSink::new(Color::Green);
+        let mut execution_context = Machine::new(memory, 0);
         println!("Memory: {:?}", execution_context.memory.data());
-        let instructions = run(&mut execution_context).unwrap();
+        run(&mut execution_context, &mut input, &mut output);
         println!("Memory: {:?}", execution_context.memory.data());
-        assert_eq!(instructions.len(), 3);
-        assert_eq!(instructions[0], Instruction::Trinary { code: Opcode::Add, lhs: Mode::Position(9usize), rhs: Mode::Position(10usize), dst: Mode::Position(3usize), });
-        assert_eq!(instructions[1], Instruction::Trinary { code: Opcode::Multiply, lhs: Mode::Position(3usize), rhs: Mode::Position(11usize), dst: Mode::Position(0usize), });
-        assert_eq!(instructions[2], Instruction::Halt);
         assert_eq!(execution_context.memory.data(), vec![3500,9,10,70,2,3,11,0,99,30,40,50]);
     }
 }

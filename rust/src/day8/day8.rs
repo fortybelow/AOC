@@ -77,7 +77,7 @@ impl Image {
 fn main() {
     let input_file = std::env::args().nth(1).expect("Usage: day8 INPUT_FILE");
     let input = std::fs::read_to_string(input_file).expect("Error reading input file");
-    let mut image = Image::new(&input, (25, 6));
+    let image = Image::new(&input, (25, 6));
 
     // Part 1
     let layer = image

@@ -76,7 +76,7 @@ fn compute(input: &str) -> (isize, isize) {
 
                 let point: (isize, isize) = (x, y);
                 if steps.contains_key(&point) {
-                    let mut v: &mut Vec<(isize, isize)> = steps.get_mut(&point).unwrap();
+                    let v: &mut Vec<(isize, isize)> = steps.get_mut(&point).unwrap();
                     if v.iter().any(|(wire, _)| *wire == i as isize) {
                         continue;
                     }
@@ -128,7 +128,7 @@ fn compute(input: &str) -> (isize, isize) {
 
 fn main() {
     let input = include_str!("day3.txt");
-    let (distance, steps) = compute(input);
+    let (_distance, _steps) = compute(input);
 }
 
 

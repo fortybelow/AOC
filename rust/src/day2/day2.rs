@@ -1,6 +1,8 @@
 #![allow(dead_code)]
 
 
+// allow unused
+#[allow(unused_macros)]
 macro_rules! show_me {
     ($e:expr) => {
         {
@@ -101,7 +103,7 @@ fn main() {
     let mut memory = program.clone();
     memory[1] = 12;
     memory[2] = 2;
-    deserialize(&mut memory);
+    let _ = deserialize(&mut memory);
         
     // print Vec<usize> as comma-separated list
     println!("{}", memory.iter().map(|i| i.to_string()).collect::<Vec<_>>().join(","));
@@ -112,7 +114,7 @@ fn main() {
             let mut memory = program.clone();
             memory[1] = noun;
             memory[2] = verb;
-            deserialize(&mut memory);
+            let _ = deserialize(&mut memory);
             if memory[0] == 19690720 {
                 println!("noun: {}, verb: {}", noun, verb);
                 println!("answer: {}", 100 * noun + verb);
