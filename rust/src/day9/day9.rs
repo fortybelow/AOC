@@ -711,4 +711,23 @@ mod tests {
         println!("Memory: {:?}", execution_context.memory.data());
         assert_eq!(execution_context.memory.data(), vec![3500,9,10,70,2,3,11,0,99,30,40,50]);
     }
+
+    #[test]
+    fn run_example_binary() {
+        println!("Running against test program.");
+        let memory = Memory::new(vec![3,21,1008,21,8,20,1005,20,22,107,8,21,20,
+                                      1006,20,31,1106,0,36,98,0,0,1002,21,125,
+                                      20,4,20,1105,1,46,104,999,1105,1,46,1101,
+                                      1000,1,20,4,20,1105,1,46,98,99]);
+        println!("Memory: {:?}", memory.data());
+
+        let mut execution_context = Machine::new(memory, 0);
+        let mut input = MemoryBus::new();
+        let mut output = ConsoleSink::new(Color::Green);
+
+        input.seed(1);
+        run(&mut execution_context, &mut input, &mut output);
+
+        println!("Memory: {:?}", execution_context.memory.data());
+    }
 }
